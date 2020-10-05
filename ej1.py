@@ -1,6 +1,6 @@
 """
 author: Ariel Suil Aravena [asuil]
-date: 03-09-2020
+date: 03-09-2020 (last modified on: 05-10-2020)
 
 a basic implementation of a Perceptron
 """

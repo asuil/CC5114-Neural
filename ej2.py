@@ -1,3 +1,11 @@
+"""
+author: Ariel Suil Aravena [asuil]
+date: 05-10-2020
+
+a basic test of a Perceptron
+"""
+
+
 from ej1 import Perceptron
 from random import randrange as random
 import matplotlib.pyplot as mpl
