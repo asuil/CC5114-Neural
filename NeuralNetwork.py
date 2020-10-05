@@ -1,5 +1,8 @@
 import numpy as np
 
+ITERATIONS = []
+COSTS = []
+
 
 def sigmoid(z):
     return 1 / (1 + np.exp(-z))
@@ -118,8 +121,9 @@ def model(X, Y, n_x, n_h, n_y, num_of_iters, learning_rate):
         cost = calculate_cost(a2, Y)
         grads = backward_prop(X, Y, cache, parameters)
         parameters = update_parameters(parameters, grads, learning_rate)
-        # if (i % 100 == 0):
-            # print('Cost after iteration# {:d}: {:f}'.format(i, cost)) disabled
+        if (i % 100 == 0):
+            ITERATIONS.append(i)
+            COSTS.append(i)
 
     return parameters
 
@@ -177,18 +181,22 @@ print('Neural Network prediction for example ({:d}, {:d}) is {:d}'.format(
 
 # Edited code starts here
 
+import matplotlib.pyplot as mpl
+mpl.plot(ITERATIONS, COSTS)
+mpl.show()
+
 # The outputs of the AND for every example in X
 # The outputs of the OR for every example in X
 Ys = [
-  np.array([[0, 0, 0, 1]]),
-  np.array([[0, 1, 1, 1]])
-  ]
+    np.array([[0, 0, 0, 1]]),
+    np.array([[0, 1, 1, 1]])
+]
 # All posible tests
 X_tests = [
-  np.array([[0], [0]]),
-  np.array([[0], [1]]),
-  np.array([[1], [0]]),
-  np.array([[1], [1]])
+    np.array([[0], [0]]),
+    np.array([[0], [1]]),
+    np.array([[1], [0]]),
+    np.array([[1], [1]])
 ]
 
 for Y in Ys:
@@ -202,7 +210,6 @@ for Y in Ys:
         # Print the result
         print('Neural Network prediction for example ({:d}, {:d}) is {:d}'.format(
             X_test[0][0], X_test[1][0], y_predict))
-
 
 # The 2 training examples by columns
 X = np.array([[0, 1]])
@@ -222,8 +229,8 @@ trained_parameters = model(X, Y, n_x, n_h, n_y, number_of_iterations, learning_r
 
 # All posible tests
 X_tests = [
-  np.array([[0]]),
-  np.array([[1]])
+    np.array([[0]]),
+    np.array([[1]])
 ]
 for X_test in X_tests:
     y_predict = predict(X_test, trained_parameters)
