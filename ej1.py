@@ -22,6 +22,21 @@ class Perceptron:
 		res = x1*self.__w1 + x2*self.__w2 + self.__b
 		return 1 if res > 0 else 0
 
+	# update weight1
+	# dw (int) => None
+	def update_weight_x(self, dw):
+		self.__w1 += dw
+
+	# update weight2
+	# dw (int) => None
+	def update_weight_y(self, dw):
+		self.__w2 += dw
+
+	# update bias
+	# db (int) => None
+	def update_bias(self, db):
+		self.__b += db
+
 
 # class to test Perceptron behaviour
 class TestPerceptron:
