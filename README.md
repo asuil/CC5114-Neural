@@ -12,6 +12,5 @@ Solutions to Tareas and problems presented in class
 1. Execute .py files
 2. profit
 
-## T1
-### How to run
-Having all the files from the T1 folder (ionosphere.data | main.py | NeuralNetwork.py) run main.py, wait for the training and testing, after a while the confusion matrix should be printed out along with precision and recall metrics.
+## TAREAS
+Each T# folder contains instructions on how to execute the different projects!
