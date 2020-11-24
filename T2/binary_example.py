@@ -33,3 +33,4 @@ ga = GA(pop_size=100,mutation_rate=0.1,fitness=fitness_bits,
 best_fitness_list, avg_list, best_individual = ga.run()
 
 print(''.join(best_individual))
+print(best_fitness_list)

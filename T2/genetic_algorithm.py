@@ -6,6 +6,9 @@ genetic algorithm implementation
 
 """
 
+import math
+import random
+
 
 # class that represents a genetic algorithm and allows to run it
 # pop_size:                 (int) Number of individuals per generation
@@ -86,14 +89,65 @@ class GA:
 
             if not self.__silent:
                 print("Selecting parents from individuals")
+
             # SELECTION (tournament)
+            # since we're crossovering every parent with each other once, we'll get (parents-1)^2 children
+            # taking the inverse, we need sqrt(pop_size)+1 parents to fill the pop_size
+            n_parents = math.ceil(math.sqrt(self.__pop_size) + 1)
+            parents = [None] * n_parents
+            for i in range(n_parents):
+
+                # we take 10% of individuals
+                fitness_sample = random.sample(fitness_results, int(self.__pop_size * 0.1))
+
+                # we get the best one
+                best_local_index = fitness_results.index(max(fitness_sample))
+                best_local_individual = individuals[best_local_index]
+
+                # we save the best as a parent
+                parents[i] = best_local_individual  # save individual instead of index for code readability
 
             if not self.__silent:
-                print(f"Mutating parents to create new generation")
+                print("Crossovering parents to create new generation")
+
+            # CROSSOVER
+            children = [None] * (n_parents * (n_parents-1))
+            child_index = 0
+            for i_parent in range(n_parents):
+                for other_parent in range(n_parents):
+
+                    # don't crossover with self
+                    if i_parent != other_parent:
+                        child = crossover(parents[i_parent], parents[other_parent], self.__mut_rate)
+                        children[child_index] = child
+                        child_index += 1
+
+            if not self.__silent:
+                print("Mutating children of new generation")
+
             # MUTATION
+            children = [mutate(child, self.__mut_rate) for child in children]
+
+            if not self.__silent:
+                print("Setting new generation as population")
+
+            # RE-DEFINE POPULATION
+            individuals = random.sample(children, self.__pop_size)  # reduce children to population size
 
         if not self.__silent:
             print("Algorithm Finished")
             print(f"Number of generations: {iterations}")
 
         return best_fitness_list, avg_fitness_list, best_individual
+
+
+# simulates crossover of individuals using two parents (p1, p2) and a mutation rate (mr)
+# array(gene), array(gene), float -> array(gene)
+def crossover(p1, p2, mr):
+    return p1
+
+
+# simulates mutation of genes in an individual (i), with a mutation rate (mr)
+# array(gene), float -> array(gene)
+def mutate(i, mr):
+    return i
