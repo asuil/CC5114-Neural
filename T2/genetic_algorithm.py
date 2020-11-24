@@ -8,6 +8,7 @@ genetic algorithm implementation
 
 import math
 import random
+import matplotlib.pyplot as mpl
 
 
 # class that represents a genetic algorithm and allows to run it
@@ -19,6 +20,9 @@ import random
 # termination_condition:    (float -> bool) Functions that recieves the fitness of an individual and returns whether the algorithm should end or not
 # silent:                   (bool) Turns on/off algorithm prints
 # max_iter:                 (int) Maximum number of iterations before ending the algorithm [>0 or -1 to disable]
+#
+# run()     executes algorithm
+# graph()   displays results of fitness function
 #
 # a 'gene' could be any object as long as it's the same in all given functions
 class GA:
@@ -33,12 +37,18 @@ class GA:
 
         self.__pop_size = pop_size
         self.__mut_rate = mutation_rate
+        self.__genes_per_individual = len(individual_factory())
+        self.__genes_to_mut = math.floor(self.__genes_per_individual*self.__mut_rate)
         self.__fitness = fitness
         self.__i_factory = individual_factory
         self.__g_factory = gene_factory
         self.__end_cond = termination_condition
         self.__silent = silent
         self.__max_iter = max_iter
+
+        # space to save results to graph later
+        self.__last_best_results = []
+        self.__last_avg_results = []
 
     # execute algorithm, returns best individual
     # None -> array(gene)
@@ -51,8 +61,8 @@ class GA:
         individuals = [self.__i_factory() for i in range(self.__pop_size)]
 
         iterations = 0
-        best_fitness_list = [None] * self.__max_iter
-        avg_fitness_list = [None] * self.__max_iter
+        best_fitness_list = []
+        avg_fitness_list = []
         while iterations != self.__max_iter:
 
             if not self.__silent:
@@ -67,8 +77,8 @@ class GA:
             # RECORD DATA
             best_fitness = max(fitness_results)
             avg_fitness = sum(fitness_results) / len(fitness_results)
-            best_fitness_list[iterations] = best_fitness
-            avg_fitness_list[iterations] = avg_fitness
+            best_fitness_list.append(best_fitness)
+            avg_fitness_list.append(avg_fitness)
 
             if not self.__silent:
                 print("Finding best individual")
@@ -97,8 +107,9 @@ class GA:
             parents = [None] * n_parents
             for i in range(n_parents):
 
-                # we take 10% of individuals
-                fitness_sample = random.sample(fitness_results, int(self.__pop_size * 0.1))
+                # we take a population sample relative to the number of parents
+                # 1/n_parents was chosen since it means giving a chance to pretty much anyone to be chosen as a parent
+                fitness_sample = random.sample(fitness_results, int(self.__pop_size * (1 / n_parents)))
 
                 # we get the best one
                 best_local_index = fitness_results.index(max(fitness_sample))
@@ -118,7 +129,7 @@ class GA:
 
                     # don't crossover with self
                     if i_parent != other_parent:
-                        child = crossover(parents[i_parent], parents[other_parent], self.__mut_rate)
+                        child = crossover(parents[i_parent], parents[other_parent], self.__genes_to_mut)
                         children[child_index] = child
                         child_index += 1
 
@@ -126,7 +137,7 @@ class GA:
                 print("Mutating children of new generation")
 
             # MUTATION
-            children = [mutate(child, self.__mut_rate) for child in children]
+            children = [mutate(child, self.__g_factory, self.__genes_to_mut) for child in children]
 
             if not self.__silent:
                 print("Setting new generation as population")
@@ -138,16 +149,51 @@ class GA:
             print("Algorithm Finished")
             print(f"Number of generations: {iterations}")
 
+        # SAVE RESULTS TO GRAPH
+        self.__last_best_results = best_fitness_list
+        self.__last_avg_results = avg_fitness_list
+
         return best_fitness_list, avg_fitness_list, best_individual
 
+    # displays graph showing fitness function results
+    # None -> None
+    def graph(self):
+        x = range(1, len(self.__last_best_results) + 1)
+        y1 = self.__last_best_results
+        y2 = self.__last_avg_results
+        mpl.plot(x, y1, marker='o')
+        mpl.plot(x, y2, marker='o')
+        mpl.legend(['best fitness', 'average fitness'])
+        mpl.xlabel('number of generation')
+        mpl.ylabel('fitness function result')
+        mpl.show()
 
-# simulates crossover of individuals using two parents (p1, p2) and a mutation rate (mr)
-# array(gene), array(gene), float -> array(gene)
-def crossover(p1, p2, mr):
-    return p1
+
+# simulates crossover of individuals using two parents (p1, p2) and the number of genes to change (nmut)
+# array(gene), array(gene), int -> array(gene)
+def crossover(p1, p2, nmut):
+
+    # tomamos nmut indices al azar
+    indices = random.sample(range(len(p1)), nmut)
+
+    # reemplazamos con valor de p2 en p1
+    child = p1.copy()
+    for index in indices:
+        child[index] = p2[index]
+
+    return child
 
 
-# simulates mutation of genes in an individual (i), with a mutation rate (mr)
-# array(gene), float -> array(gene)
-def mutate(i, mr):
-    return i
+# simulates mutation of genes replacing nmut genes of individual (i) using the factory (g_fact)
+# array(gene), int -> array(gene)
+def mutate(i, g_fact, nmut):
+
+    # tomamos nmut indices al azar
+    indices = random.sample(range(len(i)), nmut)
+
+    # reemplazamos con valor recién creado en indices de i
+    child = i.copy()
+    for index in indices:
+        child[index] = g_fact()
+
+    return child
