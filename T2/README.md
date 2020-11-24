@@ -5,11 +5,11 @@ Solution to Tarea 2
 * Python 3.8
 
 ## Files
-####binary_example.py
+#### binary_example.py
 working example on how to use a genetic algorithm (given in class)
-####genetic_algorithm.py
+#### genetic_algorithm.py
 personal implementation of a genetic algorithm engine
-####main.py
+#### main.py
 proposed solution to the N-Queen problem using the genetic algorithm engine
 
 ## How to run
