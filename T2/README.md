@@ -5,13 +5,13 @@ Solution to Tarea 2
 * Python 3.8
 
 ## Files
-####genetic_algorithm.py
+#### genetic_algorithm.py
 personal implementation of a genetic algorithm engine
-####main.py
+#### main.py
 proposed solution to the N-Queen problem using the genetic algorithm engine
-####binary.py
+#### binary.py
 proposed solution to the finding a binary representation using the genetic algorithm engine
-####word.py
+#### word.py
 proposed solution to the guessing a word using the genetic algorithm engine
 
 
